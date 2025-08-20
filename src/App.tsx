@@ -106,7 +106,7 @@ export function App({
     const table = grist.getTable(tableId);
     // Update column is_cover in row that has id = 2
 
-    table.update({ id: recordId, fields: { highlighted_data: JSON.stringify(highlights) } });
+    table.update({ id: recordId, fields: { highlighted_data: highlights } });
   };
 
   const updateHighlight = (

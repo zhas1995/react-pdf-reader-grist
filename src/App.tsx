@@ -52,13 +52,11 @@ export function App({
   pdfFileLoc,
   recordId
 }) {
-  // const searchParams = new URLSearchParams(document.location.search);
-  // const initialUrl = searchParams.get("url") || PRIMARY_PDF_URL;
+  const searchParams = new URLSearchParams(document.location.search);
+  const initialUrl = searchParams.get("url") || PRIMARY_PDF_URL;
 
   const [url, setUrl] = useState(pdfFileLoc);
-  const [highlights, setHighlights] = useState<Array<IHighlight>>(
-    testHighlights[pdfFileLoc] ? [...testHighlights[pdfFileLoc]] : [],
-  );
+  const [highlights, setHighlights] = useState<Array<IHighlight>>([]);
 
   const resetHighlights = () => {
     setHighlights([]);
@@ -91,6 +89,16 @@ export function App({
     };
   }, [scrollToHighlightFromHash]);
 
+  useEffect(() => {
+    const tableId = 'Resources'; // Replace with your table ID
+    // Get current table API object.
+    const table = grist.getTable(tableId);
+    // Update column is_cover in row that has id = 2
+
+    table.update({ id: recordId, fields: { highlighted_data: highlights } });
+
+  }, [highlights]);
+
   const getHighlightById = (id: string) => {
     return highlights.find((highlight) => highlight.id === id);
   };
@@ -101,12 +109,6 @@ export function App({
       { ...highlight, id: getNextId() },
       ...prevHighlights,
     ]);
-    const tableId = 'Resources'; // Replace with your table ID
-    // Get current table API object.
-    const table = grist.getTable(tableId);
-    // Update column is_cover in row that has id = 2
-
-    table.update({ id: recordId, fields: { highlighted_data: highlights } });
   };
 
   const updateHighlight = (
